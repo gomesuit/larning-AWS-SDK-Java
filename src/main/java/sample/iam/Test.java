@@ -60,7 +60,7 @@ public class Test {
 		printSlack(messages);
 	}
 
-	private static void printSlack(List<Message> messages) {		
+	private static void printSlack(List<Message> messages) {
 		String msg = "";
 		Collections.reverse(messages);
 		for (Message message : messages) {
@@ -103,7 +103,7 @@ public class Test {
 		return message;
 	}
 
-	private static class Message implements Comparable{
+	private static class Message implements Comparable<Message> {
 		private String userName;
 		private String accessKeyId;
 		private String status;
@@ -157,8 +157,7 @@ public class Test {
 		}
 
 		@Override
-		public int compareTo(Object o) {
-			Message other = (Message) o;
+		public int compareTo(Message other) {
 			return (int) (this.diff - other.getDiff());
 		}
 	}
