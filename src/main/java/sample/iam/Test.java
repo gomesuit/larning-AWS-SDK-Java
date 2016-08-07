@@ -1,5 +1,6 @@
+package sample.iam;
 
-public class aaa {
+public class Test {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
