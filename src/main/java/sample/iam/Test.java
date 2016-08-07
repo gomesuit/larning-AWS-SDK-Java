@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Region;
@@ -21,9 +27,16 @@ import com.amazonaws.services.identitymanagement.model.User;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 
-public class Test {
+@SpringBootApplication
+public class Test implements CommandLineRunner {
+    protected final static Logger logger = LoggerFactory.getLogger(Test.class);
 
 	public static void main(String[] args) {
+        SpringApplication.run(Test.class, args);
+	}
+	
+    @Override
+    public void run(String... args) throws Exception {
 		if (args.length != 1) {
 			return;
 		}
@@ -38,30 +51,27 @@ public class Test {
 		iam.setRegion(region);
 
 		for (User user : iam.listUsers().getUsers()) {
-			System.out.println(user);
+	        logger.info("user : {}", user);
 			ListAccessKeysRequest listAccessKeysRequest = new ListAccessKeysRequest().withUserName(user.getUserName());
 
 			for (AccessKeyMetadata key : iam.listAccessKeys(listAccessKeysRequest).getAccessKeyMetadata()) {
-				System.out.println(key);
+		        logger.info("key : {}", key);
 
 				GetAccessKeyLastUsedRequest GetAccessKeyLastUsedRequest = new GetAccessKeyLastUsedRequest()
 						.withAccessKeyId(key.getAccessKeyId());
 				GetAccessKeyLastUsedResult result = iam.getAccessKeyLastUsed(GetAccessKeyLastUsedRequest);
-				System.out.println(result);
-
-				System.out.println("user : " + user.getUserName());
-				System.out.println("key : " + key.getAccessKeyId());
-				System.out.println("used : " + result.getAccessKeyLastUsed().getLastUsedDate());
+		        logger.info("result : {}", result);
 
 				messages.add(createMessage(key, result.getAccessKeyLastUsed()));
 			}
 		}
 		// sendSlack(webHook, message);
 		printSlack(messages);
-	}
+    	
+    }
 
 	private static void printSlack(List<Message> messages) {
-		System.out.println(createSlackMessage(messages));
+        logger.info("messages : \n{}", createSlackMessage(messages));
 	}
 
 	private static String createSlackMessage(List<Message> messages) {
