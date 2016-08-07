@@ -76,7 +76,7 @@ public class Test implements CommandLineRunner {
 
 	private static String createSlackMessage(List<Message> messages) {
 		String msg = "";
-		msg = msg + String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%4s\n", "User", "AccessKeyId", "Status",
+		msg = msg + String.format("%-30s\t%-20s\t%-10s\t%-35s\t%-35s\t%4s\n", "User", "AccessKeyId", "Status",
 				"CreateDate", "LastUsedDate", "Diff");
 		Collections.reverse(messages);
 		for (Message message : messages) {
@@ -92,7 +92,7 @@ public class Test implements CommandLineRunner {
 	}
 
 	private static String formatMessage(Message message) {
-		return String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%4d\n", message.getUserName(), message.getAccessKeyId(),
+		return String.format("%-30s\t%-20s\t%-10s\t%-35s\t%-35s\t%4d\n", message.getUserName(), message.getAccessKeyId(),
 				message.getStatus(), message.getCreateDate(), message.getLastUsedDate(), message.getDiff());
 	}
 
