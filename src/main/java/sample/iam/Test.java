@@ -1,5 +1,8 @@
 package sample.iam;
 
+import java.time.Instant;
+import java.util.Date;
+
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Region;
@@ -51,8 +54,8 @@ public class Test {
 				message = message + getMessageRow(key, result.getAccessKeyLastUsed());
 			}
 		}
-		sendSlack(webHook, message);
-		// System.out.println(message);
+		// sendSlack(webHook, message);
+		System.out.println(message);
 	}
 
 	private static void sendSlack(String webHook, String message) {
@@ -61,7 +64,15 @@ public class Test {
 	}
 
 	private static String getMessageRow(AccessKeyMetadata key, AccessKeyLastUsed used) {
-		return String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\n", key.getUserName(), key.getAccessKeyId(),
-				key.getStatus(), key.getCreateDate(), used.getLastUsedDate());
+		Date now = new Date();
+		Date lastUsed = used.getLastUsedDate();
+		
+		long diff = 999;
+		if(lastUsed != null){
+			diff = (now.getTime() - lastUsed.getTime()) / (60 * 60 * 24 * 1000);
+		}
+		
+		return String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%3d\n", key.getUserName(), key.getAccessKeyId(),
+				key.getStatus(), key.getCreateDate(), used.getLastUsedDate(), diff);
 	}
 }
