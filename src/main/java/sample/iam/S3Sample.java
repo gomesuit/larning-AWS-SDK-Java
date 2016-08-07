@@ -40,7 +40,7 @@ public class S3Sample {
     	
     	AWSCredentialsProvider cp = new EnvironmentVariableCredentialsProvider();
 
-        AmazonS3 s3 = new AmazonS3Client(cp.getCredentials());
+        AmazonS3 s3 = new AmazonS3Client(cp);
         Region usWest2 = Region.getRegion(Regions.AP_NORTHEAST_1);
         s3.setRegion(usWest2);
 
