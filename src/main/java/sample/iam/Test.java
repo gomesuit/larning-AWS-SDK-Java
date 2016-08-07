@@ -61,27 +61,28 @@ public class Test {
 	}
 
 	private static void printSlack(List<Message> messages) {
+		System.out.println(createSlackMessage(messages));
+	}
+
+	private static String createSlackMessage(List<Message> messages) {
 		String msg = "";
+		msg = msg + String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%4s\n", "User", "AccessKeyId", "Status",
+				"CreateDate", "LastUsedDate", "Diff");
 		Collections.reverse(messages);
 		for (Message message : messages) {
 			msg = msg + formatMessage(message);
 		}
-		System.out.println(msg);
+		return "```\n" + msg + "```";
 	}
 
 	private static void sendSlack(String webHook, List<Message> messages) {
-		String msg = "";
-		Collections.reverse(messages);
-		for (Message message : messages) {
-			msg = msg + formatMessage(message);
-		}
-
+		String msg = createSlackMessage(messages);
 		SlackApi api = new SlackApi(webHook);
-		api.call(new SlackMessage("#general", "Mafagafo", "```" + msg + "```"));
+		api.call(new SlackMessage("#general", "Mafagafo", msg));
 	}
 
 	private static String formatMessage(Message message) {
-		return String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%3d\n", message.getUserName(), message.getAccessKeyId(),
+		return String.format("%-20s\t%-20s\t%-7s\t%-35s\t%-35s\t%4d\n", message.getUserName(), message.getAccessKeyId(),
 				message.getStatus(), message.getCreateDate(), message.getLastUsedDate(), message.getDiff());
 	}
 
