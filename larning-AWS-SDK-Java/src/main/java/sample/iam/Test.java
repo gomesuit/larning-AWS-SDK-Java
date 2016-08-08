@@ -1,5 +1,7 @@
 package sample.iam;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -76,8 +78,9 @@ public class Test implements CommandLineRunner {
 
 	private static String createSlackMessage(List<Message> messages) {
 		String msg = "";
-		msg = msg + String.format("%-30s\t%-20s\t%-10s\t%-35s\t%-35s\t%4s\n", "User", "AccessKeyId", "Status",
+		msg = msg + String.format("%-30s\t%-20s\t%-10s\t%-15s\t%-15s\t%4s\n", "User", "AccessKeyId", "Status",
 				"CreateDate", "LastUsedDate", "Diff");
+		Collections.sort(messages);
 		Collections.reverse(messages);
 		for (Message message : messages) {
 			msg = msg + formatMessage(message);
@@ -92,8 +95,17 @@ public class Test implements CommandLineRunner {
 	}
 
 	private static String formatMessage(Message message) {
-		return String.format("%-30s\t%-20s\t%-10s\t%-35s\t%-35s\t%4d\n", message.getUserName(), message.getAccessKeyId(),
-				message.getStatus(), message.getCreateDate(), message.getLastUsedDate(), message.getDiff());
+		String createDate = formatDate(message.getCreateDate());
+		String lastUsedDate = formatDate(message.getLastUsedDate());
+		
+		return String.format("%-30s\t%-20s\t%-10s\t%-15s\t%-15s\t%4d\n", message.getUserName(), message.getAccessKeyId(),
+				message.getStatus(), createDate, lastUsedDate, message.getDiff());
+	}
+	
+	private static String formatDate(Date date){
+		if(date == null) return "None";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		return formatter.format(date.toInstant().atZone(ZoneId.systemDefault()));
 	}
 
 	private static Message createMessage(AccessKeyMetadata key, AccessKeyLastUsed used) {
